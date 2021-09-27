@@ -14,15 +14,7 @@ const urlDatabase = {
 };
 
 app.get("/", (req, res) => {
-  res.send("Hello!");
-});
-
-app.get("/urls.json", (req, res) => {
-  res.json(urlDatabase);
-});
-
-app.get("/hello", (req, res) => {
-  res.send("<html><body>Hello <b>World</b></body></html>\n");
+  res.redirect("/urls");
 });
 
 app.get("/urls", (req, res) => {
@@ -36,13 +28,25 @@ app.get("/urls/new", (req, res) => {
 
 app.get("/urls/:shortURL", (req, res) => {
   const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };
-  res.render("urls_show", templateVars);
+  if (urlDatabase[req.params.shortURL] === undefined) {
+   // res.send("That URL does not exist.\nGoing back...");
+    setTimeout(() => {
+      res.redirect("/urls");
+    }, 2000);
+  } else {
+    res.render("urls_show", templateVars);
+  }
+});
+
+app.get("/u/:shortURL", (req, res) => {
+  const longURL = urlDatabase[req.params.shortURL];
+  res.redirect(longURL);
 });
 
 app.post("/urls", (req, res) => {
   const shortURL = generateRandomString();
   urlDatabase[shortURL] = req.body.longURL;
-  res.render("urls_show", { shortURL, longURL: urlDatabase[shortURL] });
+  res.redirect(`/urls/${shortURL}`);
 });
 
 app.listen(PORT, () => {
