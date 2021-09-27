@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/fr3chtoa45t/tinyapp/issues"
   },
-  "homepage": "https://github.com/fr3chtoa45t/tinyapp#readme"
+  "homepage": "https://github.com/fr3chtoa45t/tinyapp#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
 }
