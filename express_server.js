@@ -31,7 +31,7 @@ app.get("/urls/:shortURL", (req, res) => {
   if (urlDatabase[req.params.shortURL] === undefined) {
    // res.send("That URL does not exist.\nGoing back...");
     setTimeout(() => {
-      res.redirect("/urls");
+      res.render("/urls");
     }, 2000);
   } else {
     res.render("urls_show", templateVars);
