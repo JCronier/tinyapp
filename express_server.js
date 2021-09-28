@@ -2,10 +2,12 @@
 
 const express = require("express");
 const bodyParser = require("body-parser");
+const morgan = require("morgan");
 const app = express();
 const PORT = 8080; // default port 8080
 
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(morgan("tiny"));
 app.set("view engine", "ejs");
 
 const urlDatabase = {
@@ -29,9 +31,9 @@ app.get("/urls/new", (req, res) => {
 app.get("/urls/:shortURL", (req, res) => {
   const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };
   if (urlDatabase[req.params.shortURL] === undefined) {
-   // res.send("That URL does not exist.\nGoing back...");
+    
     setTimeout(() => {
-      res.render("/urls");
+      res.redirect("/urls");
     }, 2000);
   } else {
     res.render("urls_show", templateVars);
@@ -47,6 +49,12 @@ app.post("/urls", (req, res) => {
   const shortURL = generateRandomString();
   urlDatabase[shortURL] = req.body.longURL;
   res.redirect(`/urls/${shortURL}`);
+});
+
+app.post("/urls/:id", (req, res) => {
+  const id = req.params.id;
+  urlDatabase[id] = req.body.longURL;
+  res.redirect(`/urls/${id}`);
 });
 
 app.post("/urls/:shortURL/delete", (req, res) => {
