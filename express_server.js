@@ -81,7 +81,14 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  //res.cookie("username", req.body.username);
+  const email = req.body.email;
+  const password = req.body.password;
+
+  const user = checkEmail(email);
+  if (!user) return res.status(403).redirect("/login");
+  if (user.password !== password) return res.status(403).redirect("/login");
+
+  res.cookie("user_id", user.id);
   res.redirect("/urls");
 });
 
@@ -94,9 +101,15 @@ app.post("/register", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
 
-  if (!email || !password) return res.status(400).redirect("/register");
-  if (checkEmail(email)) return res.status(400).redirect("/register");
+  if (!email || !password) {
+    console.log("can't use empty strings");
+    return res.status(400).redirect("/register");
+  }
+  if (checkEmail(email)) {
+    console.log("user already exist");
+    return res.status(400).redirect("/register");
 
+  }
   const id = generateRandomString();
 
   users[id] = {
@@ -105,14 +118,14 @@ app.post("/register", (req, res) => {
     password
   };
 
-  res.cookie("user_id", id);
-  console.log(users);
-  res.redirect("/urls");
+  res.redirect("/login");
 });
 
 app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`);
+  console.log(`TinyApp server listening on port ${PORT}!`);
 });
+
+
 
 function generateRandomString() {
   let newString = "";

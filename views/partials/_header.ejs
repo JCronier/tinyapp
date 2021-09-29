@@ -11,22 +11,20 @@
       </div>
     </div>
 
-    <div id="user-login">
-      <%if (user) { %>
-        <div>
-          <form class="card-text form-inline" action="/logout" method="POST">
-            <label for="email" style="margin-right: 10px;">Logged in as: <%= user.email %></label>
-            <button type="submit" class="btn btn-danger btn-sm">Logout</button>
-          </form>
-        </div>
-      <% } else { %>
-        <div>
-          <form class="card-text form-inline" action="/login" method="POST">
-            <input type="text" name="username" placeholder="Username" style="border-radius: 5px;margin-right: 10px;">
-            <button type="submit" class="btn btn-warning btn-sm">Login</button>
-          </form>
-        </div>
-      <% } %>
+    <%if (user) { %>
+    <div>
+      <form class="card-text form-inline" action="/logout" method="POST">
+        <label for="email" style="margin-right: 10px;">Logged in as: <%= user.email %></label>
+        <button type="submit" class="btn btn-danger btn-sm">Logout</button>
+      </form>
     </div>
+    <%} else { %>
+    <div class="collapse navbar-collapse" id="navbarUserActions" style="justify-content: right;">
+      <div class="navbar-nav">
+        <a class="nav-item nav-link" href="/login">Login</a>
+        <a class="nav-item nav-link" href="/register">Register</a>
+      </div>
+    </div>
+    <%} %>
   </nav>
 </header>
