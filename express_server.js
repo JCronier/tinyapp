@@ -28,18 +28,18 @@ app.get("/urls", (req, res) => {
 });
 
 app.get("/urls/new", (req, res) => {
-  const templateVars = { user: users[req.cookies.user_id] }
+  const templateVars = { user: users[req.cookies.user_id] };
   res.render("urls_new", templateVars);
 });
 
 app.get("/urls/:shortURL", (req, res) => {
-  const templateVars = { 
+  const templateVars = {
     user: users[req.cookies.user_id],
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL]
-   };
+  };
+
   if (urlDatabase[req.params.shortURL] === undefined) {
-    
     setTimeout(() => {
       res.redirect("/urls");
     }, 2000);
@@ -132,7 +132,7 @@ function generateRandomString() {
   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   const newStringLength = 6;
 
-  for(let i = 0; i < newStringLength; i++) {
+  for (let i = 0; i < newStringLength; i++) {
     newString += characters.charAt(Math.floor(Math.random() * characters.length));
   }
 
@@ -140,7 +140,7 @@ function generateRandomString() {
 }
 
 function checkEmail(email) {
-  for(const userId in users) {
+  for (const userId in users) {
     if (users[userId].email === email) return users[userId];
   }
 
