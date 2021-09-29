@@ -91,5 +91,3 @@ function generateRandomString() {
 
   return newString;
 }
-
-console.log("hello");
