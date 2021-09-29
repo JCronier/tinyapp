@@ -12,12 +12,12 @@
   <%- include('partials/_header') %>
   <main style="margin: 1em;">
     <h3>My URLs</h3>
-    <table class="table">
+    <table class="table" style="table-layout: fixed">
       <thead>
         <tr>
           <th scope="col">Short URL</th>
           <th scope="col">Long URL</th>
-          <th scope="col"></th>
+          <th scope="col">Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -30,10 +30,11 @@
             <td>
               <div class="form-inline">
                 <form method="GET" action='/urls/<%= url %>'>
-                  <button type="submit" class="btn btn-outline-primary">Edit</button>
+                  <button type="submit" class="btn btn-outline-primary" style="margin-right: 5px;">Edit</button>
                 </form>
+                
                 <form method="POST" action='/urls/<%= url %>/delete'>
-                  <button type="submit" class="btn btn-outline-danger">Delete</button>
+                  <button type="submit" class="btn btn-outline-danger" style="margin-left: 5px;">Delete</button>
                 </form>
             </div>
             </td>

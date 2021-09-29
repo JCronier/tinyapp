@@ -12,10 +12,7 @@ app.use(morgan("tiny"));
 app.use(cookieParser());
 app.set("view engine", "ejs");
 
-const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com",
-};
+const urlDatabase = {};
 
 app.get("/", (req, res) => {
   res.redirect("/urls");
@@ -71,6 +68,11 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 
 app.post("/login", (req, res) => {
   res.cookie("username", req.body.username);
+  res.redirect("/urls");
+});
+
+app.post("/logout", (req, res) => {
+  res.clearCookie("username");
   res.redirect("/urls");
 });
 

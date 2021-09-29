@@ -11,10 +11,22 @@
       </div>
     </div>
 
-    <form class="ca card-text" action="/login" method="POST">
-      <label class="card-text" for="username"><%= username %></label>
-      <input class="card-text" type="text" name="username" placeholder="Username">
-      <button type="submit" class="btn ">Login</button>
-    </form>
+    <div id="user-login">
+      <%if (username) { %>
+        <div>
+          <form class="card-text form-inline" action="/logout" method="POST">
+            <label for="username" style="margin-right: 10px;">Logged in as: <%= username %></label>
+            <button type="submit" class="btn btn-danger btn-sm">Logout</button>
+          </form>
+        </div>
+      <% } else { %>
+        <div>
+          <form class="card-text form-inline" action="/login" method="POST">
+            <input type="text" name="username" placeholder="Username" style="border-radius: 5px;margin-right: 10px;">
+            <button type="submit" class="btn btn-warning btn-sm">Login</button>
+          </form>
+        </div>
+      <% } %>
+    </div>
   </nav>
 </header>
