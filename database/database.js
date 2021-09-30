@@ -1,4 +1,8 @@
-// database.js
+/** 
+ * tiny-app database
+ * 
+ * Author: Jordan Cronier
+ */
 
 const urlDatabase = {};
 const users = {};

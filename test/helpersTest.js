@@ -1,8 +1,19 @@
-// helpersTest.js
+/** 
+ * tiny-app helper function test
+ * 
+ * Author: Jordan Cronier
+ */
 
+/**
+ * Test dependencies
+ */
 const { assert } = require('chai');
-
 const { getUserByEmail } = require('../scripts/helpers');
+
+
+/**
+ * Test data
+ */
 
 const testUsers = {
   "userRandomID": {
@@ -16,6 +27,10 @@ const testUsers = {
     password: "dishwasher-funk"
   }
 };
+
+/**
+ * Test functions
+ */
 
 describe('getUserByEmail', function() {
   it('should return a user with valid email', function() {

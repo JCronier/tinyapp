@@ -1,6 +1,17 @@
-// helpers.js
+/** 
+ * tiny-app helper functions
+ * 
+ * Author: Jordan Cronier
+ */
 
+/**
+ * Module dependencies
+ */
 const { urlDatabase, users } = require("../database/database");
+
+/**
+ * Functions
+ */
 
 const generateRandomString = function() {
   let newString = "";
