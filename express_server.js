@@ -25,8 +25,12 @@ app.get("/", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  console.log(users)
-  const templateVars = { urls: urlsForUser(req.session.user_id), user: users[req.session.user_id] };
+  const templateVars = { 
+    urls: urlsForUser(req.session.user_id),
+    user: users[req.session.user_id],
+    error: req.query.error
+  };
+
   if (req.session.user_id) return res.render("urls_index", templateVars);
   res.render("urls_home", templateVars);
 });
@@ -36,39 +40,39 @@ app.get("/urls/new", (req, res) => {
     const templateVars = { user: users[req.session.user_id] };
     return res.render("urls_new", templateVars);
   }
-  return res.status(401).redirect("/login");
+  res.status(401).redirect("/login?error=You+must+be+logged+in+to+create+URLs");
 });
 
-app.get("/urls/:shortURL", (req, res) => {
+app.get("/urls/:id", (req, res) => {
+  if(!req.session.user_id) return res.status(401).redirect("/urls");
+  if (!urlDatabase[req.params.id]) return res.status(404).redirect("/urls?error=That+URL+does+not+exist");
+  if (urlDatabase[req.params.id].userID !== req.session.user_id) return res.status(401).redirect("/urls?error=You+do+not+own+that+URL");
+
   const templateVars = {
     user: users[req.session.user_id],
-    shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL].longURL
+    shortURL: req.params.id,
+    longURL: urlDatabase[req.params.id].longURL
   };
 
-  if (urlDatabase[req.params.shortURL] === undefined) {
-    setTimeout(() => {
-      res.redirect("/urls");
-    }, 2000);
-  } else {
-    res.render("urls_show", templateVars);
-  }
+  res.render("urls_show", templateVars);
 });
 
 app.get("/register", (req, res) => {
+  if(req.session.user_id) return res.redirect("/urls");
   const templateVars = { user: users[req.session.user_id] , error: req.query.error};
   res.render("register", templateVars);
 });
 
 app.get("/login", (req, res) => {
+  if(req.session.user_id) return res.redirect("/urls");
   const templateVars = { user: users[req.session.user_id], error: req.query.error };
   res.render("login", templateVars);
 });
 
-app.get("/u/:shortURL", (req, res) => {
-  if (!urlDatabase[req.params.shortURL]) return res.status(404).redirect("/urls");
+app.get("/u/:id", (req, res) => {
+  if (!urlDatabase[req.params.id]) return res.status(404).redirect("/urls?error=That+URL+does+not+exist");
 
-  const longURL = urlDatabase[req.params.shortURL].longURL;
+  const longURL = urlDatabase[req.params.id].longURL;
   res.redirect(longURL);
 });
 
@@ -84,25 +88,25 @@ app.post("/urls", (req, res) => {
     return res.redirect(`/urls/${shortURL}`);
   }
   
-  res.status(401).redirect("/login");
+  res.status(401).redirect("/login?error=You+must+be+logged+in+to+creat+URLs");
 });
 
 app.post("/urls/:id", (req, res) => {
   if (req.session.user_id === urlDatabase[req.params.id].userID) {
     const id = req.params.id;
     urlDatabase[id].longURL = req.body.longURL;
-    return res.redirect(`/urls/${id}`);
+    return res.redirect("/urls");
   }
-  res.status(403).send("You cannot edit URLs you do not own.");
+  res.status(403).redirect("/urls?error=You+cannot+edit+URLs+you+do+not+own");
 });
 
-app.post("/urls/:shortURL/delete", (req, res) => {
-  if (req.session.user_id === urlDatabase[req.params.shortURL].userID) {
-    delete urlDatabase[req.params.shortURL];
+app.post("/urls/:id/delete", (req, res) => {
+  if (req.session.user_id === urlDatabase[req.params.id].userID) {
+    delete urlDatabase[req.params.id];
     return res.redirect("/urls");
   }
 
-  res.status(403).send("You cannot delete URLs you do not own.");
+  res.status(403).redirect("/urls?error=You+cannot+delete+URLs+you+do+not+own.");
 });
 
 app.post("/login", (req, res) => {
@@ -116,7 +120,6 @@ app.post("/login", (req, res) => {
   if (!bcrypt.compareSync(password, user.password)) return res.status(403).redirect("/login?error=Invalid+credentials");
 
   req.session.user_id = user.id;
-  console.log(req.session.user_id)
   res.redirect("/urls");
 });
 
@@ -144,7 +147,8 @@ app.post("/register", (req, res) => {
     password: bcrypt.hashSync(password, 10)
   };
 
-  res.redirect("/login");
+  req.session.user_id = id;
+  res.redirect("/urls");
 });
 
 app.listen(PORT, () => {
