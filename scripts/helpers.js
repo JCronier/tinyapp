@@ -14,9 +14,9 @@ const generateRandomString = function() {
   return newString;
 };
 
-const checkEmail = function(email) {
-  for (const userId in users) {
-    if (users[userId].email === email) return users[userId];
+const checkEmail = function(email, database) {
+  for (const userId in database) {
+    if (database[userId].email === email) return database[userId];
   }
 
   return null;

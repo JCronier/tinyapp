@@ -111,7 +111,7 @@ app.post("/login", (req, res) => {
 
   if (!email || !password) return res.status(403).redirect("/login?error=Email+and%2For+password+fields+empty");
 
-  const user = checkEmail(email);
+  const user = checkEmail(email, users);
   if (!user) return res.status(403).redirect("/login?error=That+email+does+not+exist");
   if (!bcrypt.compareSync(password, user.password)) return res.status(403).redirect("/login?error=Invalid+credentials");
 
@@ -132,7 +132,7 @@ app.post("/register", (req, res) => {
   if (!email || !password) {
     return res.status(400).redirect("/register?error=Email+and%2For+password+fields+empty");
   }
-  if (checkEmail(email)) {
+  if (checkEmail(email, users)) {
     return res.status(400).redirect("/register?error=Email+address+already+in+use");
 
   }
