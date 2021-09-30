@@ -166,14 +166,5 @@ function checkEmail(email) {
 }
 
 function urlsForUser(id) {
-  const userUrls = {};
-
-  for (const url in urlDatabase) {
-    console.log(url)
-    if (urlDatabase[url].userID === id) {
-      userUrls[url] = urlDatabase[url];
-    }
-  }
-
-  return userUrls;
+  return Object.keys(urlDatabase).filter(url => urlDatabase[url].userID === id);
 }
