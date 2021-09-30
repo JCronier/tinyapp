@@ -8,16 +8,15 @@
 
 <body>
   <%- include('partials/_header') %>
-  <div class="text-center">
+  <div class="text-center" style="width:50%;background-color: beige;margin:auto">
     <form action="/register" method="POST">
-        <h2>Registration</h2>
-      <div style="margin: 1em;">
-        <label for="email"><b>Email</b></label>
-        <input class="form-inline" type="email" name="email" placeholder="Enter email" style="width: 300px; margin: auto">
-        <label for="password"><b>Password</b></label>
-        <input class="form-inline" type="password" name="password" placeholder="Enter password" style="width: 300px; margin: auto">
-    </div>
-      <button type="submit" class="btn btn-primary">Register</button>
+      <h2>Register an Account</h2>
+      <div>
+        <input class="form-inline" type="email" name="email" placeholder="Email" style="width: 300px;margin: 20px auto 10px auto">
+        <input class="form-inline" type="password" name="password" placeholder="Password" style="width: 300px;margin: 20px auto 10px auto">
+        <a href="/login">Already have an account? Login here.</a><br>
+        <button type="submit" class="btn btn-primary" style="margin: 15px 0px 10px;">Register</button>
+      </div> 
     </form>
   </div>
   <!-- Bootstrap JS -->
