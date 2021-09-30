@@ -6,7 +6,7 @@ const morgan = require("morgan");
 const cookieSession = require("cookie-session");
 const favicon = require("serve-favicon");
 const bcrypt = require('bcryptjs');
-const { generateRandomString, checkEmail, urlsForUser } = require("./scripts/helpers");
+const { generateRandomString, getUserByEmail, urlsForUser } = require("./scripts/helpers");
 const { urlDatabase, users } = require("./database/database");
 const app = express();
 const PORT = 8080; // default port 8080
@@ -111,7 +111,7 @@ app.post("/login", (req, res) => {
 
   if (!email || !password) return res.status(403).redirect("/login?error=Email+and%2For+password+fields+empty");
 
-  const user = checkEmail(email, users);
+  const user = getUserByEmail(email, users);
   if (!user) return res.status(403).redirect("/login?error=That+email+does+not+exist");
   if (!bcrypt.compareSync(password, user.password)) return res.status(403).redirect("/login?error=Invalid+credentials");
 
@@ -132,7 +132,7 @@ app.post("/register", (req, res) => {
   if (!email || !password) {
     return res.status(400).redirect("/register?error=Email+and%2For+password+fields+empty");
   }
-  if (checkEmail(email, users)) {
+  if (getUserByEmail(email, users)) {
     return res.status(400).redirect("/register?error=Email+address+already+in+use");
 
   }
