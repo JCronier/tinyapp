@@ -55,12 +55,12 @@ app.get("/urls/:shortURL", (req, res) => {
 });
 
 app.get("/register", (req, res) => {
-  const templateVars = { user: users[req.cookies.user_id] };
+  const templateVars = { user: users[req.cookies.user_id] , error: req.query.error};
   res.render("register", templateVars);
 });
 
 app.get("/login", (req, res) => {
-  const templateVars = { user: users[req.cookies.user_id] };
+  const templateVars = { user: users[req.cookies.user_id], error: req.query.error };
   res.render("login", templateVars);
 });
 
@@ -88,23 +88,32 @@ app.post("/urls", (req, res) => {
 });
 
 app.post("/urls/:id", (req, res) => {
-  const id = req.params.id;
-  urlDatabase[id].longURL = req.body.longURL;
-  res.redirect(`/urls/${id}`);
+  if (req.cookies.user_id === urlDatabase[req.params.id].userID) {
+    const id = req.params.id;
+    urlDatabase[id].longURL = req.body.longURL;
+    return res.redirect(`/urls/${id}`);
+  }
+  res.status(403).send("You cannot edit URLs you do not own.");
 });
 
 app.post("/urls/:shortURL/delete", (req, res) => {
-  delete urlDatabase[req.params.shortURL];
-  res.redirect("/urls");
+  if (req.cookies.user_id === urlDatabase[req.params.shortURL].userID) {
+    delete urlDatabase[req.params.shortURL];
+    return res.redirect("/urls");
+  }
+
+  res.status(403).send("You cannot delete URLs you do not own.");
 });
 
 app.post("/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
 
+  if(!email || !password) return res.status(403).redirect("/login?error=Email+and%2For+password+fields+empty");
+
   const user = checkEmail(email);
-  if (!user) return res.status(403).redirect("/login");
-  if (user.password !== password) return res.status(403).redirect("/login");
+  if (!user) return res.status(403).redirect("/login?error=That+email+does+not+exist");
+  if (user.password !== password) return res.status(403).redirect("/login?error=Invalid+password");
 
   res.cookie("user_id", user.id);
   res.redirect("/urls");
@@ -120,12 +129,10 @@ app.post("/register", (req, res) => {
   const password = req.body.password;
 
   if (!email || !password) {
-    console.log("can't use empty strings");
-    return res.status(400).redirect("/register");
+    return res.status(400).redirect("/register?error=Email+and%2For+password+fields+empty");
   }
   if (checkEmail(email)) {
-    console.log("user already exist");
-    return res.status(400).redirect("/register");
+    return res.status(400).redirect("/register?error=Email+address+already+in+use");
 
   }
   const id = generateRandomString();
@@ -166,5 +173,14 @@ function checkEmail(email) {
 }
 
 function urlsForUser(id) {
-  return Object.keys(urlDatabase).filter(url => urlDatabase[url].userID === id);
+  const userUrls = {};
+
+  for (const url in urlDatabase) {
+    console.log(url)
+    if (urlDatabase[url].userID === id) {
+      userUrls[url] = urlDatabase[url];
+    }
+  }
+
+  return userUrls;
 }
