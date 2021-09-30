@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
 const favicon = require("serve-favicon");
+const bcrypt = require('bcryptjs');
 const { generateRandomString, checkEmail, urlsForUser } = require("./scripts/helpers");
 const { urlDatabase, users } = require("./database/database");
 const app = express();
@@ -22,6 +23,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
+  console.log(users)
   const templateVars = { urls: urlsForUser(req.cookies.user_id), user: users[req.cookies.user_id] };
   if (req.cookies.user_id) return res.render("urls_index", templateVars);
   res.render("urls_home", templateVars);
@@ -109,7 +111,7 @@ app.post("/login", (req, res) => {
 
   const user = checkEmail(email);
   if (!user) return res.status(403).redirect("/login?error=That+email+does+not+exist");
-  if (user.password !== password) return res.status(403).redirect("/login?error=Invalid+password");
+  if (!bcrypt.compareSync(password, user.password)) return res.status(403).redirect("/login?error=Invalid+password");
 
   res.cookie("user_id", user.id);
   res.redirect("/urls");
@@ -136,7 +138,7 @@ app.post("/register", (req, res) => {
   users[id] = {
     id,
     email,
-    password
+    password: bcrypt.hashSync(password, 10)
   };
 
   res.redirect("/login");
