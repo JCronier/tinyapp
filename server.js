@@ -1,6 +1,6 @@
-/** 
+/**
  * tiny-app server
- * 
+ *
  * Author: Jordan Cronier
  */
 
@@ -11,7 +11,6 @@
 
 const express = require("express");
 const bodyParser = require("body-parser");
-const morgan = require("morgan");
 const cookieSession = require("cookie-session");
 const favicon = require("serve-favicon");
 const bcrypt = require('bcryptjs');
@@ -27,7 +26,6 @@ const PORT = 8080;
 
 app.use(favicon(__dirname + "/images/favicon.ico"));
 app.use(bodyParser.urlencoded({extended: true}));
-app.use(morgan("tiny"));
 app.use(cookieSession({
   name: "session",
   keys: ["key1", "key2"]
@@ -48,7 +46,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  const templateVars = { 
+  const templateVars = {
     urls: urlsForUser(req.session.user_id),
     user: users[req.session.user_id],
     error: req.query.error
@@ -73,7 +71,7 @@ app.get("/urls/new", (req, res) => {
 
 app.get("/urls/:id", (req, res) => {
   // not logged in
-  if(!req.session.user_id) return res.status(401).redirect("/urls");
+  if (!req.session.user_id) return res.status(401).redirect("/urls");
 
   // URL not found
   if (!urlDatabase[req.params.id]) {
@@ -82,7 +80,7 @@ app.get("/urls/:id", (req, res) => {
 
   // URL ID tag doesn't match user
   if (urlDatabase[req.params.id].userID !== req.session.user_id) {
-   return res.status(401).redirect("/urls?error=You+do+not+own+that+URL");
+    return res.status(401).redirect("/urls?error=You+do+not+own+that+URL");
   }
 
   const templateVars = {
@@ -96,7 +94,7 @@ app.get("/urls/:id", (req, res) => {
 
 app.get("/register", (req, res) => {
   // already logged in
-  if(req.session.user_id) return res.redirect("/urls");
+  if (req.session.user_id) return res.redirect("/urls");
 
   const templateVars = { user: users[req.session.user_id] , error: req.query.error};
   res.render("register", templateVars);
@@ -104,7 +102,7 @@ app.get("/register", (req, res) => {
 
 app.get("/login", (req, res) => {
   // already logged in
-  if(req.session.user_id) return res.redirect("/urls");
+  if (req.session.user_id) return res.redirect("/urls");
 
   const templateVars = {
     user: users[req.session.user_id],

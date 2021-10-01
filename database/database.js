@@ -1,6 +1,6 @@
-/** 
+/**
  * tiny-app database
- * 
+ *
  * Author: Jordan Cronier
  */
 

@@ -1,13 +1,13 @@
-/** 
+/**
  * tiny-app helper functions
- * 
+ *
  * Author: Jordan Cronier
  */
 
 /**
  * Module dependencies
  */
-const { urlDatabase, users } = require("../database/database");
+const { urlDatabase } = require("../database/database");
 
 /**
  * Functions
